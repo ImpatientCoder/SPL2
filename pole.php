@@ -3,112 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>Election Pole</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link rel="stylesheet" href="../Vote/style.css">
 </head>
 <body>
  
- <div id="heading">
-     <h2>Vote for your favourite candidate</h2>
- </div>
-  <div class="container">
-    <form action="pole.php" method="post" align="center">
-       <div>
-           <img src="../images/messi.jpg" width="280" height="250" alt="Messi"><br>
-           <input type="submit" name="messi" value="Vote for Messi">
-       </div>
-       
-       <div>
-           <img src="../images/Cristiano-Ronaldo.jpg" width="280" height="250" alt="Ronaldo"><br>
-           <input type="submit" name="ronaldo" value="Vote for Ronaldo">   
-       </div>
-       
-       <div>
-           <img src="../images/Neymar_Junior_the_Future_of_Brazil.jpg" width="280" height="250" alt="Neymar"><br>    
-           <input type="submit" name="neymar" value="Vote for Neymar">
-       </div>
-       
-    </form>
-    
-    <?php
-          $connection = mysqli_connect('localhost', 'root', 'root', 'voter');
-            
-          if(isset($_POST['messi']))
-          {
-              $vote_messi = "UPDATE vote SET messi=messi+1;";
-              $run_messi = mysqli_query($connection, $vote_messi);
-              
-              if($run_messi)
-              {
-                  echo "<h2 align='center'>Your vote has been casted for Lionel Messi</h2>";
-                  echo "<h2 align='center'><a href='pole.php?results'>View Results</a></h2>";
-              }
-          }
-          if(isset($_POST['ronaldo']))
-          {
-              $vote_ronaldo = "UPDATE vote SET ronaldo=ronaldo+1;";
-              $run_ronaldo = mysqli_query($connection, $vote_ronaldo);
-              
-              if($run_ronaldo)
-              {
-                  echo "<h2 align='center'>Your vote has been casted for Cristiano Ronaldo</h2>";
-                  echo "<h2 align='center'><a href='pole.php?results'>View Results</a></h2>";
-              }
-          }
-          if(isset($_POST['neymar']))
-          {
-              $vote_neymar = "UPDATE vote SET neymar=neymar+1;";
-              $run_neymar = mysqli_query($connection, $vote_neymar);
-              
-              if($run_neymar)
-              {
-                  echo "<h2 align='center'>Your vote has been casted for Neymar, Brazil</h2>";
-                  echo "<h2 align='center'><a href='pole.php?results'>View Results</a></h2>";
-              }
-          } 
-      
-        //Operation for "View results..!"
-        
-         if(isset($_GET['results']))  
-         {
-             $get_votes = "SELECT* FROM vote";
-             $run_votes = mysqli_query($connection, $get_votes);
-             $votes_row = mysqli_fetch_array($run_votes);
-             
-             
-             $messi = $votes_row['messi'];
-             $ronaldo = $votes_row['ronaldo'];
-             $neymar = $votes_row['neymar'];
-             
-             $count = $messi+$ronaldo+$neymar;
-             
-             $per_messi = round($messi*100/$count)."%";
-             $per_ronaldo = round($ronaldo*100/$count)."%";
-             $per_neymar = round($neymar*100/$count)."%";
-             
-             
-             echo "
-                <div style='background:orange; text-align:center; padding: 10px;'>
-                    <center>
-                        <h2>Updated result</h2>   
-                        <p style='background: black; color:white; padding: 10px; width:50%;'>
-                            <b>Lionel Messi: </b>$messi($per_messi)
-                        </p>
-                        <p style='background: black; color:white; padding: 10px; width:50%;'>
-                            <b>Cristiano Ronaldo: </b>$ronaldo($per_ronaldo)
-                        </p>
-                        <p style='background: black; color:white; padding: 10px; width:50%;'>
-                            <b>Neymar: </b>$neymar($per_neymar)
-                        </p>
-                    </center>
-                </div>
-             ";  
-         }
-    ?>              
+ <div id="heading"><h2>Vote for your favourite president</h2></div>
+ 
+  <div class="container" id="con_id">
+  	<table class="table table-bordered">
+    	<form action="candidateCast.php" method="post" align="center">
+
+    		<?php
+    			$sql = "SELECT * FROM candidate";
+				$result= mysqli_query($connection, $sql);
+
+			    while($row = mysqli_fetch_assoc($result))
+			    { 
+			        if($row['status']=='approved' && $row['post']=='president')
+			        {
+			        	$id = $row['id'];
+			        	$username= $row['username'];
+
+			        	$sql2 = "INSERT INTO president (id, username) VALUES('$id', '$username')";	
+			        	mysqli_query($connection, $sql2);
+			        	?>
+
+			        	<tr>
+				        	<th class="text-center"><h2><?php echo $row['username'] ?></h2></th>
+				        	<td>..........</td>
+				        	<td>Votefor <input type="submit" name="pname" value="<?php echo $row['username'] ?>" onclick="return confirm('Are you sure to vote?')"></td>
+			        	</tr>
+					<?php
+			        }
+				}
+			?>
+    	</form>    
+    </table>	         
   </div>
 
- <div id="heading">
-     <h2>This is only for sample of project</h2>
- </div>
-    
-</body>
-</html>
+
+ <div id="heading"> <h2>Vote for your favourite secretary</h2></div>
+
+<div class="container">
+	<table class="table table-bordered">
+		<form action="candidateCast.php" method="post" align="center">
+    		<?php
+    			$sql = "SELECT * FROM candidate";
+				$result= mysqli_query($connection, $sql);
+
+			    while($row = mysqli_fetch_assoc($result))
+			    { 
+			        if($row['status']=='approved' && $row['post']=='secretary')
+			        {
+			        	$id = $row['id'];
+			        	$username= $row['username'];
+
+			        	$sql2 = "INSERT INTO secretary (id, username) VALUES('$id', '$username')";	
+			        	mysqli_query($connection, $sql2);
+
+			        	?>
+			        	<tr>
+				        	<th class="text-center"><h2><?php echo $row['username'] ?></h2>  </th>
+				        	<td>..........</td>
+				        	<td>Votefor<input type="submit" name="sname" value="<?php echo $row['username'] ?>" onclick="return confirm('Are you sure to vote?')"></td>
+			        	</tr>
+					<?php
+			        }
+				}
+			?>
+	    </form>    
+    </table>	
+</div>
